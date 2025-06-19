@@ -21,7 +21,7 @@ This project documents how I successfully unbricked and installed **OpenWrt** on
 
 ### 1. Desolder the NAND
 
-Remove the NAND chip and dump it using the XGecu T48 programmer.
+Remove the NAND chip adt 350-380 celcius and dump it using the XGecu T48 programmer.
 
 ![Image](https://github.com/user-attachments/assets/62510006-f71a-4ed3-9516-42f700a1912d)
 
