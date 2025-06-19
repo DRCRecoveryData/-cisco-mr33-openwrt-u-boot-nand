@@ -22,9 +22,13 @@ This project documents how I successfully unbricked and installed **OpenWrt** on
 
 Remove the NAND chip and dump it using the XGecu T48 programmer.
 
-![Desolder 1](images/step1.jpg)
-![Desolder 2](images/step2.jpg)
-![Desolder 3](images/step3.jpg)
+![Image](https://github.com/user-attachments/assets/62510006-f71a-4ed3-9516-42f700a1912d)
+
+![Image](https://github.com/user-attachments/assets/24ab95c7-1b4e-4ebd-9b27-9a0964a11493)
+
+![Image](https://github.com/user-attachments/assets/a144da7f-30a8-4fc1-8873-1e90e549d6e5)
+
+![Image](https://github.com/user-attachments/assets/74381654-a622-406f-90a6-50f5d2a186d4)
 
 ---
 
@@ -66,7 +70,7 @@ ubiupdatevol /dev/ubi0_6 /tmp/art.bin
 
 ✅ Done!
 
-![Final step](images/done.jpg)
+![Image](https://github.com/user-attachments/assets/9610a169-ee45-4f71-80c9-109a3dd67c90)
 
 ---
 
