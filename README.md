@@ -1,2 +1,134 @@
-# -cisco-mr33-openwrt-u-boot-nand
-Unbrick and install OpenWrt on Cisco Meraki MR33 by patching NAND via U-Boot with XGecu T48 and Python.
+# Cisco Meraki MR33 – OpenWrt NAND Recovery via U-Boot
+
+This project documents how I successfully unbricked and installed **OpenWrt** on a **Cisco Meraki MR33** by patching the NAND image using a hardware programmer and custom Python script.
+
+---
+
+## 🖥️ System Info
+
+- **Target Device:** Cisco Meraki MR33
+- **Bootloader:** U-Boot 2017.07-RELEASE-g78ed34f31579 (Sep 29 2017 -0700)
+- **Tools Used:**
+  - [XGecu T48 programmer](https://www.xgecu.com/)
+  - Python 3.x on Windows
+  - Putty (115200 baud serial)
+  - NAND dump and patch files
+
+---
+
+## 🛠️ Recovery Steps
+
+### 1. Desolder the NAND
+
+Remove the NAND chip and dump it using the XGecu T48 programmer.
+
+![Desolder 1](images/step1.jpg)
+![Desolder 2](images/step2.jpg)
+![Desolder 3](images/step3.jpg)
+
+---
+
+### 2. Patch NAND Image
+
+Run the `patch_nand.py` script to inject required U-Boot and UBI partitions:
+
+```bash
+python patch_nand.py original_dump.bin patched_dump.bin
+````
+
+This script:
+
+* Validates NAND dump size (expected 0x8400000 bytes)
+* Injects:
+
+  * `ubootmr332012.bin` at block 56
+  * `ubimr33.bin` at block 96
+  * *(Optional)* `art_repaired.bin` at block 88
+
+> 📝 Make sure the `.bin` files are placed in the same directory.
+
+---
+
+### 3. Flash Patched Image
+
+Write `patched_dump.bin` back to the NAND using the XGecu T48.
+
+---
+
+### 4. Restore ART Partition from Serial Console
+
+After booting, use Putty to connect via serial (115200 baud). Then:
+
+```sh
+cat /dev/mtd10 > /tmp/art.bin
+ubiupdatevol /dev/ubi0_6 /tmp/art.bin
+```
+
+✅ Done!
+
+![Final step](images/done.jpg)
+
+---
+
+## 📜 Script: `patch_nand.py`
+
+```python
+import os
+import sys
+import shutil
+
+BLOCK_SIZE = 135168  # 0x21000
+EXPECTED_SIZE = 138412032  # 0x8400000
+
+def error(message):
+    print(f"Error: {message}", file=sys.stderr)
+    sys.exit(1)
+
+def write_binary_section(target_file, source_file, seek_blocks):
+    offset = BLOCK_SIZE * seek_blocks
+    with open(source_file, 'rb') as sf:
+        data = sf.read()
+    with open(target_file, 'r+b') as tf:
+        tf.seek(offset)
+        tf.write(data)
+
+def main(infile, outfile):
+    if not os.path.exists(infile):
+        error("Source image missing")
+    if not outfile:
+        error("Target image not provided")
+    if os.path.abspath(infile) == os.path.abspath(outfile):
+        error("Source equals target, will not overwrite the source file")
+    if os.path.exists(outfile):
+        error("Target image already exists. Refusing to overwrite!")
+
+    if os.path.getsize(infile) != EXPECTED_SIZE:
+        error("Source image has invalid size. Was it dumped without OOB data?")
+
+    shutil.copyfile(infile, outfile)
+
+    write_binary_section(outfile, "ubootmr332012.bin", seek_blocks=56)
+    write_binary_section(outfile, "ubimr33.bin", seek_blocks=96)
+    # Uncomment if restoring ART:
+    # write_binary_section(outfile, "art_repaired.bin", seek_blocks=88)
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print(f"Usage: {sys.argv[0]} <infile> <outfile>")
+        sys.exit(1)
+
+    main(sys.argv[1], sys.argv[2])
+```
+
+---
+
+## 🙏 Credits
+
+* Special thanks to [@Leo-PL](https://github.com/Leo-PL) for guidance on UBI volume restoration.
+* Inspired by community recoveries and OpenWrt projects.
+
+---
+
+## 📄 License
+
+MIT (or your preferred license)
