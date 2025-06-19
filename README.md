@@ -136,4 +136,4 @@ if __name__ == "__main__":
 
 ## 📄 License
 
-MIT (or your preferred license)
+MIT
