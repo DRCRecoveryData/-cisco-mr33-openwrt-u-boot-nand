@@ -13,6 +13,7 @@ This project documents how I successfully unbricked and installed **OpenWrt** on
   - Python 3.x on Windows
   - Putty (115200 baud serial)
   - NAND dump and patch files
+  - Original & uboot old file: [Google Drive](https://drive.google.com/drive/folders/1yo3IyedajK82GsJlJkOw4OKro0svAW70)
 
 ---
 
