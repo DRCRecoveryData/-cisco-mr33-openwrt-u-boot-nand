@@ -1,5 +1,7 @@
 # Cisco Meraki MR33 – OpenWrt NAND Recovery via U-Boot
 
+![2025-06-21_194358](https://github.com/user-attachments/assets/f053aab9-a4e0-46b3-b68f-f37f8497aeb0)
+
 This project documents how I successfully unbricked and installed **OpenWrt** on a **Cisco Meraki MR33** by patching the NAND image using a hardware programmer and custom Python script.
 
 ---
